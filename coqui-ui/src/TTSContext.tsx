@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  FormEvent,
   useCallback,
   useContext,
   useEffect,
@@ -22,8 +21,8 @@ const TTSContext = createContext<{
   isGenerating: boolean;
   audioUrl: string | null;
 }>({
-  selectModel: (model: string) => {},
-  generate: (model: string, modelParameters: FormData) => {},
+  selectModel: (_model: string) => {},
+  generate: (_model: string, _modelParameters: FormData) => {},
   models: [],
   filteredModels: [],
   selectedModel: null,
@@ -35,7 +34,8 @@ const TTSContext = createContext<{
   audioUrl: null,
 });
 
-const API_BASE_URL = "http://localhost:5000";
+const API_PORT = process.env.VITE_API_PORT;
+const API_BASE_URL = `http://localhost:${API_PORT}/api`;
 
 export const TTSContextProvider = ({
   children,
@@ -59,7 +59,7 @@ export const TTSContextProvider = ({
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/models`);
+        const response = await fetch(`${API_BASE_URL}/models`);
         const data: { models: string[] } = await response.json();
         setModels(data.models);
         setFilteredModels(data.models);
@@ -83,7 +83,7 @@ export const TTSContextProvider = ({
   const pollModelStatus = useCallback(async (modelName: string) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/model_info?model=${encodeURIComponent(modelName)}`
+        `${API_BASE_URL}/model_info?model=${encodeURIComponent(modelName)}`
       );
       const data: ModelInfo = await response.json();
 
@@ -122,7 +122,7 @@ export const TTSContextProvider = ({
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/generate`, {
+      const response = await fetch(`${API_BASE_URL}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -134,7 +134,7 @@ export const TTSContextProvider = ({
       setHistory([{ ...payload, id }, ...history]);
       // const blob = await response.blob();
       // const url = URL.createObjectURL(blob);
-      setAudioUrl(`${API_BASE_URL}/api/audio/${id}.wav`);
+      setAudioUrl(`${API_BASE_URL}/audio/${id}.wav`);
     } catch (error) {
       console.error("Error generating audio:", error);
       alert("Failed to generate audio");

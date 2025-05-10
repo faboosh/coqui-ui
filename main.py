@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, send_file, jsonify, send_from_directory
 from flask_cors import CORS
 from TTS.api import TTS
 import os
@@ -13,7 +13,9 @@ CORS(app)
 # Initialize TTS once at startup
 tts = TTS()
 MODELS = tts.list_models()
-TEMP_DIR = "temp_audio"
+PORT = int(os.environ.get('COQUI_TTS_PORT', 5000))
+DEBUG = bool(os.environ.get('COQUI_TTS_DEBUG', False))
+TEMP_DIR = os.environ.get('COQUI_TTS_TEMP_DIR', '/tmp/coqui-tts')
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 # Store loaded models and their status
@@ -41,6 +43,13 @@ def load_model_worker():
 # Start the model loading worker thread
 model_load_thread = threading.Thread(target=load_model_worker, daemon=True)
 model_load_thread.start()
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/api/models', methods=['GET'])
 def get_models():
@@ -149,4 +158,4 @@ def generate_speech():
         return jsonify({'error': 'Failed to generate speech'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=DEBUG, host="0.0.0.0", port=PORT)

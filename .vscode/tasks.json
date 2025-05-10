@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+      {
+          "label": "Start Flask",
+          "type": "shell",
+          "command": "direnv exec . start-flask",
+          "problemMatcher": []
+      },
+      {
+          "label": "Start Dev Environment",
+          "type": "shell",
+          "command": "direnv exec . start-dev",
+          "problemMatcher": []
+      }
+  ]
+}

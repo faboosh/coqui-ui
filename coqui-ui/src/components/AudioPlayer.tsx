@@ -1,5 +1,5 @@
 import { PauseCircleIcon, PlayCircleIcon } from "lucide-react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const AudioPlayer = ({ src }: { src: string }) => {
   const [playing, setPlaying] = useState(false);

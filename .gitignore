@@ -2,3 +2,4 @@
 .direnv/
 temp_audio/
 venv/
+.env

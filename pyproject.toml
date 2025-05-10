@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "coqui-ui"
+version = "0.1.0"
+description = "Coqui TTS UI"
+authors = ["Fabian Johansson <me@faboosh.dev>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+torch = { version = "*", source = "torch-cpu" }
+torchaudio = { version = "*", source = "torch-cpu" }
+coqui-tts = "0.25.3"
+flask = "3.1.0"
+flask-cors = "5.0.1"
+
+[[tool.poetry.source]]
+name = "torch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

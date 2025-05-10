@@ -1,6 +1,6 @@
-import React, { ChangeEvent } from "react";
+import { ChangeEvent } from "react";
 import { useTTSContext } from "../TTSContext";
-import { Loader2, Star, StarOff } from "lucide-react";
+import { Loader2, Star } from "lucide-react";
 import { useLocalStorageState } from "../hooks/useLocalStorageState";
 
 const ModelSelector = () => {

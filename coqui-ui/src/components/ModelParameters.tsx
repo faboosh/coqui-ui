@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useTTSContext } from "../TTSContext";
 import { FormData } from "../types";
 import { ChevronDown, ChevronUp } from "lucide-react";
