@@ -1,3 +1,5 @@
+# A simple frontend for coqui-tts
+
 Frontend ENV template:
 
 ```
