@@ -185,7 +185,7 @@
 
             # Activate the venv and run the app
             cd $out/lib/coqui-tts
-            python main.py
+            ${pythonEnv}/bin/python main.py
             EOF
 
             chmod +x $out/bin/coqui-tts-app
