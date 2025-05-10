@@ -1,9 +1,8 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useTTSContext } from "../TTSContext";
 import { FormData } from "../types";
-import { ChevronDown, ChevronUp, Download } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import AudioPlayer from "./AudioPlayer";
-import { downloadFile } from "../util/downloadFile";
 import DownloadButton from "./DownloadButton";
 
 const ModelParameters = () => {
@@ -23,15 +22,6 @@ const ModelParameters = () => {
     e.preventDefault();
     if (!selectedModel) return;
     generate(selectedModel, formData);
-  };
-
-  const generateFileName = (promptText: string) => {
-    const text = promptText
-      .replace(/[^a-z\d\s]/gi, "")
-      .replace(/\s/gi, "-")
-      .slice(0, 50)
-      .toLowerCase();
-    return `${text}.wav`;
   };
 
   if (!modelInfo || modelInfo?.status !== "ready") return null;

@@ -3,3 +3,5 @@
 temp_audio/
 venv/
 .env
+
+result
