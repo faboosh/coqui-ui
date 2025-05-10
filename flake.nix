@@ -174,7 +174,7 @@
             #!/bin/sh
 
             export PATH="${pkgs.espeak}/bin:\$PATH"
-            LD_LIBRARY_PATH=${pythonLibraryPath}
+            export LD_LIBRARY_PATH=${pythonLibraryPath}
 
             # Get port from environment or use default
             export COQUI_TTS_PORT="\''${COQUI_TTS_PORT:-5000}"
