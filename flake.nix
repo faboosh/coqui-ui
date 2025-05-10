@@ -183,6 +183,10 @@
             export COQUI_TTS_TEMP_DIR="\''${COQUI_TTS_TEMP_DIR:-/tmp/coqui-tts}"
             mkdir -p "\$COQUI_TTS_TEMP_DIR"
 
+            # Set Numba cache directory to a writable location
+            export NUMBA_CACHE_DIR="\$COQUI_TTS_TEMP_DIR/numba_cache"
+            mkdir -p "\$NUMBA_CACHE_DIR"
+
             # Activate the venv and run the app
             cd $out/lib/coqui-tts
             ${pythonEnv}/bin/python main.py
