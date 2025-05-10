@@ -116,6 +116,64 @@
           kill $FLASK_PID
         '';
 
+        nixosModule =
+          {
+            config,
+            lib,
+            pkgs,
+            ...
+          }:
+          with lib;
+          let
+            cfg = config.services.coqui-tts;
+          in
+          {
+            options.services.coqui-tts = {
+              enable = mkEnableOption "Coqui TTS web application";
+              port = mkOption {
+                type = types.int;
+                default = 5000;
+                description = "Port to listen on";
+              };
+              dataDir = mkOption {
+                type = types.str;
+                default = "/var/lib/coqui-tts";
+                description = "Directory to store temporary files";
+              };
+            };
+
+            config = mkIf cfg.enable {
+              systemd.services.coqui-tts = {
+                description = "Coqui TTS Web Application";
+                wantedBy = [ "multi-user.target" ];
+                after = [ "network.target" ];
+
+                serviceConfig = {
+                  ExecStart = "${self.packages.${pkgs.system}.default}/bin/coqui-tts-app";
+                  Restart = "on-failure";
+                  User = "coqui-tts";
+                  Group = "coqui-tts";
+
+                  # Set up the data directory
+                  StateDirectory = "coqui-tts";
+                  StateDirectoryMode = "0755";
+                  Environment = [
+                    "COQUI_TTS_TEMP_DIR=${cfg.dataDir}/temp"
+                    "COQUI_TTS_PORT=${toString cfg.port}"
+                  ];
+                };
+              };
+
+              users.users.coqui-tts = {
+                isSystemUser = true;
+                group = "coqui-tts";
+                description = "Coqui TTS service user";
+              };
+
+              users.groups.coqui-tts = { };
+            };
+          };
+
       in
       {
         devShell = pkgs.mkShell {
@@ -192,63 +250,9 @@
           '';
         };
 
-        nixosModule =
-          {
-            config,
-            lib,
-            pkgs,
-            ...
-          }:
-          with lib;
-          let
-            cfg = config.services.coqui-tts;
-          in
-          {
-            options.services.coqui-tts = {
-              enable = mkEnableOption "Coqui TTS web application";
-              port = mkOption {
-                type = types.int;
-                default = 5000;
-                description = "Port to listen on";
-              };
-              dataDir = mkOption {
-                type = types.str;
-                default = "/var/lib/coqui-tts";
-                description = "Directory to store temporary files";
-              };
-            };
-
-            config = mkIf cfg.enable {
-              systemd.services.coqui-tts = {
-                description = "Coqui TTS Web Application";
-                wantedBy = [ "multi-user.target" ];
-                after = [ "network.target" ];
-
-                serviceConfig = {
-                  ExecStart = "${self.packages.${pkgs.system}.default}/bin/coqui-tts-app";
-                  Restart = "on-failure";
-                  User = "coqui-tts";
-                  Group = "coqui-tts";
-
-                  # Set up the data directory
-                  StateDirectory = "coqui-tts";
-                  StateDirectoryMode = "0755";
-                  Environment = [
-                    "COQUI_TTS_TEMP_DIR=${cfg.dataDir}/temp"
-                    "COQUI_TTS_PORT=${toString cfg.port}"
-                  ];
-                };
-              };
-
-              users.users.coqui-tts = {
-                isSystemUser = true;
-                group = "coqui-tts";
-                description = "Coqui TTS service user";
-              };
-
-              users.groups.coqui-tts = { };
-            };
-          };
+      }
+      // {
+        inherit nixosModule;
       }
     );
 }
