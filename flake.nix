@@ -177,10 +177,10 @@
             export LD_LIBRARY_PATH=${pythonLibraryPath}
 
             # Get port from environment or use default
-            export COQUI_TTS_PORT="\''${COQUI_TTS_PORT:-5000}"
+            export COQUI_TTS_PORT="$\{COQUI_TTS_PORT:-5000}"
 
             # Set TEMP_DIR to a configurable location
-            export COQUI_TTS_TEMP_DIR="\''${COQUI_TTS_TEMP_DIR:-/tmp/coqui-tts}"
+            export COQUI_TTS_TEMP_DIR="$\{COQUI_TTS_TEMP_DIR:-/tmp/coqui-tts}"
             mkdir -p "$COQUI_TTS_TEMP_DIR"
 
             # Set all cache directories to writable locations
