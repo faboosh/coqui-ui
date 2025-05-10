@@ -34,7 +34,10 @@ const TTSContext = createContext<{
   audioUrl: null,
 });
 
-const API_BASE_URL = window.location.origin + "/api";
+const API_BASE_URL =
+  process.env.NODE_ENV === "development"
+    ? `http://localhost:${process.env.VITE_API_PORT || 5000}/api`
+    : window.location.origin + "/api";
 
 export const TTSContextProvider = ({
   children,
