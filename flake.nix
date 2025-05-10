@@ -177,30 +177,30 @@
             export LD_LIBRARY_PATH=${pythonLibraryPath}
 
             # Get port from environment or use default
-            export COQUI_TTS_PORT="$\{COQUI_TTS_PORT:-5000}"
+            export COQUI_TTS_PORT="\''${COQUI_TTS_PORT:-5000}"
 
             # Set TEMP_DIR to a configurable location
-            export COQUI_TTS_TEMP_DIR="$\{COQUI_TTS_TEMP_DIR:-/tmp/coqui-tts}"
-            mkdir -p "$COQUI_TTS_TEMP_DIR"
+            export COQUI_TTS_TEMP_DIR="\''${COQUI_TTS_TEMP_DIR:-/tmp/coqui-tts}"
+            mkdir -p "\$COQUI_TTS_TEMP_DIR"
 
             # Set all cache directories to writable locations
-            export NUMBA_CACHE_DIR="$COQUI_TTS_TEMP_DIR/numba_cache"
-            export TRANSFORMERS_CACHE="$COQUI_TTS_TEMP_DIR/transformers_cache"
-            export MPLCONFIGDIR="$COQUI_TTS_TEMP_DIR/matplotlib"
-            export HF_HOME="$COQUI_TTS_TEMP_DIR/huggingface"
+            export NUMBA_CACHE_DIR="\$COQUI_TTS_TEMP_DIR/numba_cache"
+            export TRANSFORMERS_CACHE="\$COQUI_TTS_TEMP_DIR/transformers_cache"
+            export MPLCONFIGDIR="\$COQUI_TTS_TEMP_DIR/matplotlib"
+            export HF_HOME="\$COQUI_TTS_TEMP_DIR/huggingface"
 
             # Create directories
-            mkdir -p "$NUMBA_CACHE_DIR"
-            mkdir -p "$TRANSFORMERS_CACHE"
-            mkdir -p "$MPLCONFIGDIR"
-            mkdir -p "$HF_HOME"
+            mkdir -p "\$NUMBA_CACHE_DIR"
+            mkdir -p "\$TRANSFORMERS_CACHE"
+            mkdir -p "\$MPLCONFIGDIR"
+            mkdir -p "\$HF_HOME"
 
             # For espeak/pulse audio
-            export PULSE_RUNTIME_PATH="$COQUI_TTS_TEMP_DIR/pulse"
-            mkdir -p "$PULSE_RUNTIME_PATH"
+            export PULSE_RUNTIME_PATH="\$COQUI_TTS_TEMP_DIR/pulse"
+            mkdir -p "\$PULSE_RUNTIME_PATH"
 
             # Set a general HOME for any other packages that might need it
-            export HOME="$COQUI_TTS_TEMP_DIR"
+            export HOME="\$COQUI_TTS_TEMP_DIR"
 
             # Run the app
             cd $out/lib/coqui-tts
