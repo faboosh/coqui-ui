@@ -1,11 +1,12 @@
 import { PauseCircleIcon, PlayCircleIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { MouseEvent, useRef, useState } from "react";
 
 const AudioPlayer = ({ src }: { src: string }) => {
   const [playing, setPlaying] = useState(false);
   const ref = useRef<HTMLAudioElement | null>(null);
 
-  const handlePlay = () => {
+  const handlePlay = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!ref.current) return;
     if (playing) {
       ref.current.pause();

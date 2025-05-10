@@ -1,10 +1,14 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useTTSContext } from "../TTSContext";
 import { FormData } from "../types";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Download } from "lucide-react";
+import AudioPlayer from "./AudioPlayer";
+import { downloadFile } from "../util/downloadFile";
+import DownloadButton from "./DownloadButton";
 
 const ModelParameters = () => {
-  const { modelInfo, generate, isGenerating, selectedModel } = useTTSContext();
+  const { modelInfo, generate, isGenerating, selectedModel, audioUrl } =
+    useTTSContext();
 
   const [formData, setFormData] = useState<FormData>({
     text: "",
@@ -21,9 +25,18 @@ const ModelParameters = () => {
     generate(selectedModel, formData);
   };
 
+  const generateFileName = (promptText: string) => {
+    const text = promptText
+      .replace(/[^a-z\d\s]/gi, "")
+      .replace(/\s/gi, "-")
+      .slice(0, 50)
+      .toLowerCase();
+    return `${text}.wav`;
+  };
+
   if (!modelInfo || modelInfo?.status !== "ready") return null;
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form className="space-y-4">
       <div>
         <label className="block text-sm font-medium mb-1">Text</label>
         <textarea
@@ -31,7 +44,7 @@ const ModelParameters = () => {
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             setFormData((prev) => ({ ...prev, text: e.target.value }))
           }
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border bg-stone-950 outline-0 border-stone-800 rounded"
           required
         />
       </div>
@@ -48,7 +61,7 @@ const ModelParameters = () => {
                   speaker: e.target.value,
                 }))
               }
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border border-stone-800 rounded"
             >
               <option value="">Default</option>
               {modelInfo.speakers.map((speaker) => (
@@ -58,10 +71,10 @@ const ModelParameters = () => {
               ))}
             </select>
             <div className="flex flex-col gap-1">
-              <button className="bg-gray-200 h-6 w-6 rounded-sm flex justify-center items-center">
+              <button className="bg-stone-200 h-6 w-6 rounded-sm flex justify-center items-center">
                 <ChevronUp className="w-4" />
               </button>
-              <button className="bg-gray-200 h-6 w-6 rounded-sm flex justify-center items-center">
+              <button className="bg-stone-200 h-6 w-6 rounded-sm flex justify-center items-center">
                 <ChevronDown className="w-4" />
               </button>
             </div>
@@ -80,7 +93,7 @@ const ModelParameters = () => {
                 language: e.target.value,
               }))
             }
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-stone-800 rounded"
           >
             <option value="">Default</option>
             {modelInfo.languages.map((language) => (
@@ -103,7 +116,7 @@ const ModelParameters = () => {
                 emotion: e.target.value,
               }))
             }
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border border-stone-800 rounded"
           >
             <option value="">Neutral</option>
             {modelInfo.emotions.map((emotion) => (
@@ -156,14 +169,23 @@ const ModelParameters = () => {
           />
         </div>
       )}
-
-      <button
-        type="submit"
-        disabled={isGenerating}
-        className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-      >
-        {isGenerating ? "Generating..." : "Generate Speech"}
-      </button>
+      <div className="flex gap-3">
+        <button
+          onClick={handleSubmit}
+          disabled={isGenerating}
+          className="w-full p-2 bg-sky-500 text-white rounded hover:bg-sky-600 disabled:opacity-50"
+        >
+          {isGenerating ? "Generating..." : "Generate Speech"}
+        </button>
+        {audioUrl && (
+          <>
+            <DownloadButton url={audioUrl} promptText={formData.text} />
+            <div className="shadow-inner shadow-lime-100 bg-lime-500 border-2 border-lime-300 flex items-center justify-center rounded-full p-1 text-lime-100">
+              <AudioPlayer src={audioUrl} />
+            </div>
+          </>
+        )}
+      </div>
     </form>
   );
 };

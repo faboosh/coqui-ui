@@ -5,9 +5,13 @@ import { useLocalStorageState } from "./hooks/useLocalStorageState";
 const GenerationHistoryContext = createContext<{
   history: GenerationHistoryEntry[];
   setHistory: (history: GenerationHistoryEntry[]) => void;
+  clearHistory: () => void;
+  removeHistoryEntry: (id: string) => void;
 }>({
   history: [],
   setHistory: () => {},
+  clearHistory: () => {},
+  removeHistoryEntry: (_id: string) => {},
 });
 
 export const GenerationHistoryContextProvider = ({
@@ -19,8 +23,16 @@ export const GenerationHistoryContextProvider = ({
     "generation-history",
     []
   );
+  const clearHistory = () => {
+    setHistory([]);
+  };
+  const removeHistoryEntry = (id: string) => {
+    setHistory(history.filter((entry) => entry.id !== id));
+  };
   return (
-    <GenerationHistoryContext.Provider value={{ history, setHistory }}>
+    <GenerationHistoryContext.Provider
+      value={{ history, setHistory, clearHistory, removeHistoryEntry }}
+    >
       {children}
     </GenerationHistoryContext.Provider>
   );

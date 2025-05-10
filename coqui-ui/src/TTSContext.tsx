@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { FormData, LoadingStatus, ModelInfo } from "./types";
 import useGenerationHistoryContext from "./GenerationHistoryContext";
+import { API_BASE_URL, routes } from "./api";
 
 const TTSContext = createContext<{
   selectModel: (model: string) => void;
@@ -34,11 +35,6 @@ const TTSContext = createContext<{
   audioUrl: null,
 });
 
-const API_BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? `http://localhost:${process.env.VITE_API_PORT || 5000}/api`
-    : window.location.origin + "/api";
-
 export const TTSContextProvider = ({
   children,
 }: {
@@ -61,10 +57,9 @@ export const TTSContextProvider = ({
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/models`);
-        const data: { models: string[] } = await response.json();
-        setModels(data.models);
-        setFilteredModels(data.models);
+        const modelList = await routes.models.list();
+        setModels(modelList.models);
+        setFilteredModels(modelList.models);
       } catch (error) {
         console.error("Error fetching models:", error);
       }
@@ -84,16 +79,13 @@ export const TTSContextProvider = ({
   // Poll model loading status
   const pollModelStatus = useCallback(async (modelName: string) => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/model_info?model=${encodeURIComponent(modelName)}`
-      );
-      const data: ModelInfo = await response.json();
+      const modelInfo = await routes.models.info(modelName);
 
-      setLoadingStatus(data);
+      setLoadingStatus(modelInfo);
 
-      if (data.status === "ready") {
-        setModelInfo(data);
-      } else if (data.status !== "error") {
+      if (modelInfo.status === "ready") {
+        setModelInfo(modelInfo);
+      } else if (modelInfo.status !== "error") {
         setTimeout(() => pollModelStatus(modelName), 1000);
       }
     } catch (error) {
@@ -124,18 +116,9 @@ export const TTSContextProvider = ({
     };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) throw new Error("Generation failed");
-      const { id } = await response.json();
+      const id = await routes.audio.generate(payload);
 
       setHistory([{ ...payload, id }, ...history]);
-      // const blob = await response.blob();
-      // const url = URL.createObjectURL(blob);
       setAudioUrl(`${API_BASE_URL}/audio/${id}.wav`);
     } catch (error) {
       console.error("Error generating audio:", error);

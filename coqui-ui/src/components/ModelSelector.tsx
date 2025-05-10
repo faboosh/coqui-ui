@@ -45,19 +45,19 @@ const ModelSelector = () => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setSearchTerm(e.target.value)
           }
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border border-stone-800 focus:outline-stone-800 bg-stone-950 rounded"
           placeholder="Search models..."
         />
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">Select Model</label>
-        <div className="w-full flex flex-col p-2 border rounded max-h-64 overflow-y-auto">
+        <div className="w-full flex flex-col p-2 border border-stone-800 shadow-sm rounded max-h-64 overflow-y-auto">
           {getSortedModels().map((model) => (
             <div
               key={model}
               className={`flex justify-between cursor-pointer p-1 rounded ${
-                selectedModel === model ? "bg-gray-200" : ""
+                selectedModel === model ? "bg-stone-800" : ""
               }`}
             >
               <p className="flex-grow" onClick={() => selectModel(model)}>
